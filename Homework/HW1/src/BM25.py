@@ -16,11 +16,11 @@ def preprocess_text(text):
     text = text.lower()
 
     # 3. Remove punctuation and special characters
-    text = re.sub(r'[^\w\s]', '', text)
+    # text = re.sub(r'[^\w\s]', '', text)
 
     # 4. Remove stopwords
-    stop_words = set(stopwords.words('english'))
-    text = ' '.join([word for word in text.split() if word not in stop_words])
+    # stop_words = set(stopwords.words('english'))
+    # text = ' '.join([word for word in text.split() if word not in stop_words])
 
     # 5. Stemming
     # stemmer = PorterStemmer()
@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_7"
+    answer_filename = "BM25_8"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
