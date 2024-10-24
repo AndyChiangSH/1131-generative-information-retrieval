@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_4"
+    answer_filename = "BM25_5"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     # Create BM25 instance for documents
     print("> Create BM25 instance for documents...")
-    bm25 = BM25(document_texts, k1=1.75, b=0.5)
+    bm25 = BM25(document_texts, k1=1.75, b=1.0)
 
     # Compute similarity for train questions using BM25
     print("> Compute similarity for train questions using BM25...")
