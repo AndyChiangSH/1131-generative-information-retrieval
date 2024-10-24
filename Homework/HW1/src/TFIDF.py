@@ -1,0 +1,178 @@
+import numpy as np
+import pandas as pd
+import tqdm
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+
+# Define a function for text preprocessing
+def preprocess_text(text):
+    # 1. Remove HTML tags
+    text = re.sub(r'<.*?>', '', text)
+
+    # 2. Convert to lowercase
+    text = text.lower()
+
+    # 3. Remove punctuation and special characters
+    text = re.sub(r'[^\w\s]', '', text)
+
+    # 4. Remove stopwords
+    stop_words = set(stopwords.words('english'))
+    text = ' '.join([word for word in text.split() if word not in stop_words])
+
+    # 5. Stemming
+    stemmer = PorterStemmer()
+    text = ' '.join([stemmer.stem(word) for word in text.split()])
+
+    # 6. Lemmatization
+    lemmatizer = WordNetLemmatizer()
+    text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
+
+    # 7. Remove numbers
+    text = re.sub(r'\d+', '', text)
+
+    # 8. Remove extra spaces
+    text = ' '.join(text.split())
+
+    return text
+
+
+# Implement TFIDF
+class TFIDF:
+    def __init__(self, corpus):
+        self.corpus = [doc.split() for doc in corpus]
+        self.vocab = list(set(word for doc in self.corpus for word in doc))
+        self.vocab_index = {word: idx for idx, word in enumerate(self.vocab)}
+        self.doc_vectors = self._calculate_tfidf_vectors()
+
+    def _calculate_tfidf_vectors(self):
+        """ Calculate the TF-IDF vectors for each document. """
+        tf = np.zeros((len(self.corpus), len(self.vocab)))
+        df = np.zeros(len(self.vocab))
+
+        # Calculate term frequency (TF) and document frequency (DF)
+        for doc_idx, doc in enumerate(self.corpus):
+            for word in doc:
+                word_idx = self.vocab_index[word]
+                tf[doc_idx, word_idx] += 1
+            for word in set(doc):
+                df[self.vocab_index[word]] += 1
+
+        # Calculate inverse document frequency (IDF)
+        n_docs = len(self.corpus)
+        idf = np.log((n_docs + 1) / (df + 1)) + 1
+
+        # Calculate TF-IDF
+        tfidf = tf * idf
+        
+        return tfidf
+
+    def _calculate_query_vector(self, query):
+        """ Calculate the TF-IDF vector for a query. """
+        query_vector = np.zeros(len(self.vocab))
+        query_terms = query.split()
+        term_count = {term: query_terms.count(term) for term in query_terms}
+
+        for term, count in term_count.items():
+            if term in self.vocab_index:
+                tf = count
+                df = np.sum([1 for doc in self.corpus if term in doc])
+                idf = np.log((len(self.corpus) + 1) / (df + 1)) + 1
+                query_vector[self.vocab_index[term]] = tf * idf
+
+        return query_vector
+
+    def cosine_similarity(self, vec1, vec2):
+        dot_product = np.dot(vec1, vec2)
+        norm_vec1 = np.linalg.norm(vec1)
+        norm_vec2 = np.linalg.norm(vec2)
+        if norm_vec1 == 0 or norm_vec2 == 0:
+            return 0.0
+        
+        return dot_product / (norm_vec1 * norm_vec2)
+
+    def get_top_n(self, query, n=3):
+        """ Get the top n documents for a given query using cosine similarity. """
+        query_vector = self._calculate_query_vector(query)
+        scores = [self.cosine_similarity(query_vector, doc_vector) for doc_vector in self.doc_vectors]
+        
+        return np.argsort(scores)[-n:][::-1]
+
+
+if __name__ == '__main__':
+    print("START!")
+    
+    answer_filename = "TFIDF_1"
+    
+    # Download nltk toolkit
+    print("> Download nltk toolkit...")
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    
+    # Load the datasets
+    print("> Load the datasets...")
+    documents_data = pd.read_csv('dataset/documents_data.csv')
+    train_questions = pd.read_csv('dataset/train_question.csv')
+    test_questions = pd.read_csv('dataset/test_question.csv')
+
+    # Extract document texts and question texts
+    document_texts = documents_data['Document_HTML']
+    train_question_texts = train_questions['Question']
+    test_question_texts = test_questions['Question']
+    
+    # Apply preprocessing to all texts
+    print("> Apply preprocessing to all texts...")
+    document_texts = document_texts.apply(preprocess_text)
+    train_question_texts = train_question_texts.apply(preprocess_text)
+    test_question_texts = test_question_texts.apply(preprocess_text)
+    
+    # Create TFIDF instance for documents
+    print("> Create TFIDF instance for documents...")
+    tfidf_model = TFIDF(document_texts)
+
+    # Compute similarity for train questions using TFIDF
+    print("> Compute similarity for train questions using TFIDF...")
+    train_similarity_results_tfidf = []
+    for question in tqdm.tqdm(train_question_texts, desc="Train"):
+        top_3_indices = tfidf_model.get_top_n(question, n=3)
+        top_3_indices = [index + 1 for index in top_3_indices]
+        train_similarity_results_tfidf.append(top_3_indices)
+
+    # Save to CSV for train answers
+    print("> Save to CSV for train answers...")
+    submission_tfidf = pd.DataFrame({
+        'index': train_questions['Question ID'],
+        'answer': [" ".join(map(str, indices)) for indices in train_similarity_results_tfidf]
+    })
+    submission_tfidf.to_csv(f'answer/train/{answer_filename}.csv', index=False)
+
+    # Calculate Recall@3 for train questions using TFIDF
+    print("> Calculate Recall@3 for train questions using TFIDF...")
+    train_hits_tfidf = 0
+    for idx, row in train_questions.iterrows():
+        true_doc_id = row['Answer ID']
+        if true_doc_id in train_similarity_results_tfidf[idx]:
+            train_hits_tfidf += 1
+
+    train_recall_at_3_tfidf = train_hits_tfidf / len(train_questions)
+    print(f'Recall@3 on train questions using TFIDF: {train_recall_at_3_tfidf}')
+
+    # Compute similarity for test questions using TFIDF
+    print("> Compute similarity for test questions using TFIDF...")
+    test_similarity_results_tfidf = []
+    for question in tqdm.tqdm(test_question_texts, desc="Test"):
+        top_3_indices = tfidf_model.get_top_n(question, n=3)
+        top_3_indices = [index + 1 for index in top_3_indices]
+        test_similarity_results_tfidf.append(top_3_indices)
+
+    # Save to CSV for test answers
+    print("> Save to CSV for test answers...")
+    submission_tfidf_test = pd.DataFrame({
+        'index': test_questions['Question ID'],
+        'answer': [" ".join(map(str, indices)) for indices in test_similarity_results_tfidf]
+    })
+    submission_tfidf_test.to_csv(f'answer/test/{answer_filename}.csv', index=False)
+    
+    print("END!")
