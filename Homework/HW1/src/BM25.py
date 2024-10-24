@@ -10,31 +10,31 @@ from nltk.stem import PorterStemmer, WordNetLemmatizer
 # Define a function for text preprocessing
 def preprocess_text(text):
     # 1. Remove HTML tags
-    # text = re.sub(r'<.*?>', '', text)
+    text = re.sub(r'<.*?>', '', text)
 
     # 2. Convert to lowercase
-    # text = text.lower()
+    text = text.lower()
 
     # 3. Remove punctuation and special characters
-    # text = re.sub(r'[^\w\s]', '', text)
+    text = re.sub(r'[^\w\s]', '', text)
 
     # 4. Remove stopwords
-    # stop_words = set(stopwords.words('english'))
-    # text = ' '.join([word for word in text.split() if word not in stop_words])
+    stop_words = set(stopwords.words('english'))
+    text = ' '.join([word for word in text.split() if word not in stop_words])
 
     # 5. Stemming
-    # stemmer = PorterStemmer()
-    # text = ' '.join([stemmer.stem(word) for word in text.split()])
+    stemmer = PorterStemmer()
+    text = ' '.join([stemmer.stem(word) for word in text.split()])
 
     # 6. Lemmatization
-    # lemmatizer = WordNetLemmatizer()
-    # text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
+    lemmatizer = WordNetLemmatizer()
+    text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
 
     # 7. Remove numbers
-    # text = re.sub(r'\d+', '', text)
+    text = re.sub(r'\d+', '', text)
 
     # 8. Remove extra spaces
-    # text = ' '.join(text.split())
+    text = ' '.join(text.split())
 
     return text
 
@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_9"
+    answer_filename = "BM25_1"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
