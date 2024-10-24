@@ -31,10 +31,10 @@ def preprocess_text(text):
     text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
 
     # 7. Remove numbers
-    text = re.sub(r'\d+', '', text)
+    # text = re.sub(r'\d+', '', text)
 
     # 8. Remove extra spaces
-    text = ' '.join(text.split())
+    # text = ' '.join(text.split())
 
     return text
 
@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_5"
+    answer_filename = "BM25_6"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
