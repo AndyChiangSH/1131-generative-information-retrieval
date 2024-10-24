@@ -95,6 +95,8 @@ def cosine_similarity(vec1, vec2):
 if __name__ == '__main__':
     print("START!")
     
+    answer_filename = "TF-IDF_1"
+    
     # Download nltk toolkit
     print("> Download nltk toolkit...")
     nltk.download('stopwords')
@@ -152,7 +154,7 @@ if __name__ == '__main__':
         'index': train_questions['Question ID'],
         'answer': [" ".join(map(str, indices)) for indices in train_similarity_results]
     })
-    submission.to_csv('answer/train/TF-IDF.csv', index=False)
+    submission.to_csv(f'answer/train/{answer_filename}.csv', index=False)
 
     # Calculate Recall@3 for train questions
     print("> Calculate Recall@3 for train questions...")
@@ -182,6 +184,6 @@ if __name__ == '__main__':
         'index': test_questions['Question ID'],
         'answer': [" ".join(map(str, indices)) for indices in test_similarity_results]
     })
-    submission.to_csv('answer/test/TF-IDF.csv', index=False)
+    submission.to_csv(f'answer/test/{answer_filename}.csv', index=False)
     
     print("END!")
