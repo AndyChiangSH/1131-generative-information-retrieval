@@ -10,10 +10,10 @@ from nltk.stem import PorterStemmer, WordNetLemmatizer
 # Define a function for text preprocessing
 def preprocess_text(text):
     # 1. Remove HTML tags
-    text = re.sub(r'<.*?>', '', text)
+    # text = re.sub(r'<.*?>', '', text)
 
     # 2. Convert to lowercase
-    text = text.lower()
+    # text = text.lower()
 
     # 3. Remove punctuation and special characters
     # text = re.sub(r'[^\w\s]', '', text)
@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_8"
+    answer_filename = "BM25_9"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
