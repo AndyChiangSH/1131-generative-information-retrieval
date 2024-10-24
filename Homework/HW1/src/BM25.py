@@ -23,12 +23,12 @@ def preprocess_text(text):
     text = ' '.join([word for word in text.split() if word not in stop_words])
 
     # 5. Stemming
-    stemmer = PorterStemmer()
-    text = ' '.join([stemmer.stem(word) for word in text.split()])
+    # stemmer = PorterStemmer()
+    # text = ' '.join([stemmer.stem(word) for word in text.split()])
 
     # 6. Lemmatization
-    lemmatizer = WordNetLemmatizer()
-    text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
+    # lemmatizer = WordNetLemmatizer()
+    # text = ' '.join([lemmatizer.lemmatize(word) for word in text.split()])
 
     # 7. Remove numbers
     # text = re.sub(r'\d+', '', text)
@@ -99,7 +99,7 @@ class BM25:
 if __name__ == '__main__':
     print("START!")
 
-    answer_filename = "BM25_6"
+    answer_filename = "BM25_7"
 
     # Download nltk toolkit
     print("> Download nltk toolkit...")
