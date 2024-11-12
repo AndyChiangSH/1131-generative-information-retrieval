@@ -97,12 +97,12 @@ def retrieve(input_path, output_path):
         json.dump(datas, f, ensure_ascii=False, indent=4)
 
 if __name__ == '__main__':
-    print("> Start retrieval!")
+    print("> Start retriever!")
     
     # Define directories
     ARTICLES_DIR = "dataset/articles/"
-    INPUT_DIR = "dataset/original/"
-    OUTPUT_DIR = "dataset/retrieval/"
+    INPUT_DIR = "dataset/"
+    OUTPUT_DIR = "retrieval/tf-idf/top-5/"
     TOP_K = 5
     
     # Download nltk toolkit
@@ -115,10 +115,10 @@ if __name__ == '__main__':
 
     # Process train, valid, and test claims and save them
     print("> Retrieve for train.json...")
-    # retrieve(os.path.join(INPUT_DIR, "train.json"), os.path.join(OUTPUT_DIR, "train.json"))
+    retrieve(os.path.join(INPUT_DIR, "train.json"), os.path.join(OUTPUT_DIR, "train.json"))
     print("> Retrieve for valid.json...")
-    # retrieve(os.path.join(INPUT_DIR, "valid.json"), os.path.join(OUTPUT_DIR, "valid.json"))
+    retrieve(os.path.join(INPUT_DIR, "valid.json"), os.path.join(OUTPUT_DIR, "valid.json"))
     print("> Retrieve for test.json...")
     retrieve(os.path.join(INPUT_DIR, "test.json"), os.path.join(OUTPUT_DIR, "test.json"))
 
-    print("> End retrieval!")
+    print("> End retriever!")
