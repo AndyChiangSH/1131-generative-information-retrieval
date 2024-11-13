@@ -42,7 +42,7 @@ def retrieve_top_sentences(claim, premise_articles):
     
     # Preprocess claim and sentences
     preprocessed_claim = preprocess_text(claim)
-    preprocessed_sentences = [preprocess_text(sentence) for sentence in sentences]
+    preprocessed_sentences = list(set(preprocess_text(sentence) for sentence in sentences))
     
     # print("sentences:", sentences)
     # print("preprocessed_sentences:", preprocessed_sentences)
@@ -102,8 +102,8 @@ if __name__ == '__main__':
     # Define directories
     ARTICLES_DIR = "dataset/articles/"
     INPUT_DIR = "dataset/"
-    OUTPUT_DIR = "retrieval/tf-idf/top-5/"
-    TOP_K = 5
+    OUTPUT_DIR = "retrieval/tf-idf/top-10-unique/"
+    TOP_K = 10
     
     # Download nltk toolkit
     print("> Download nltk toolkit...")
