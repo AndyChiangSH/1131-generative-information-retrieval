@@ -2,7 +2,7 @@ import os
 import json
 import torch
 import pandas as pd
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 import argparse
@@ -83,8 +83,8 @@ if __name__ == '__main__':
 
     # Load trained model and tokenizer
     print("> Load trained model and tokenizer...")
-    tokenizer = BertTokenizer.from_pretrained(CONFIG["output_path"])
-    model = BertForSequenceClassification.from_pretrained(CONFIG["output_path"])
+    tokenizer = AutoTokenizer.from_pretrained(CONFIG["output_path"])
+    model = AutoModelForSequenceClassification.from_pretrained(CONFIG["output_path"])
     model.to(device)
     model.eval()
 

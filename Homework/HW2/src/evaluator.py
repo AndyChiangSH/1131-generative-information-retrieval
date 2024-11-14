@@ -3,7 +3,7 @@ import json
 import torch
 import random
 from torch.utils.data import Dataset, DataLoader
-from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import f1_score
 from tqdm import tqdm
 import numpy as np
@@ -102,8 +102,8 @@ if __name__ == '__main__':
 
     # Initialize tokenizer and model
     print("> Initialize tokenizer and model...")
-    tokenizer = BertTokenizer.from_pretrained(f"classifier/model/{ARGS.config}/")
-    model = BertForSequenceClassification.from_pretrained(
+    tokenizer = AutoTokenizer.from_pretrained(f"classifier/model/{ARGS.config}/")
+    model = AutoModelForSequenceClassification.from_pretrained(
         f"classifier/model/{ARGS.config}/", num_labels=3)
     model.to(device)
 

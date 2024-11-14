@@ -3,7 +3,7 @@ import json
 import torch
 import random
 from torch.utils.data import Dataset, DataLoader
-from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import f1_score
 from tqdm import tqdm
 import numpy as np
@@ -99,8 +99,8 @@ if __name__ == '__main__':
 
     # Initialize tokenizer and model
     print("> Initialize tokenizer and model...")
-    tokenizer = BertTokenizer.from_pretrained(CONFIG["pretrained_model"])
-    model = BertForSequenceClassification.from_pretrained(CONFIG["pretrained_model"], num_labels=3)
+    tokenizer = AutoTokenizer.from_pretrained(CONFIG["pretrained_model"])
+    model = AutoModelForSequenceClassification.from_pretrained(CONFIG["pretrained_model"], num_labels=3)
     model.to(device)
 
     # Create datasets and dataloaders
@@ -112,12 +112,12 @@ if __name__ == '__main__':
     print("> Training arguments...")
     training_args = TrainingArguments(
         output_dir=CONFIG["output_path"],
-        num_train_epochs=3,
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
+        num_train_epochs=CONFIG["epoch"],
+        per_device_train_batch_size=CONFIG["batch_size"],
+        per_device_eval_batch_size=CONFIG["batch_size"],
         warmup_steps=500,
         weight_decay=0.01,
-        logging_dir='./logs',
+        logging_dir='logs/',
         logging_steps=10,
         evaluation_strategy="epoch",
         save_strategy="epoch",
