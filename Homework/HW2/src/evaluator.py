@@ -26,7 +26,7 @@ def get_config():
     with open(os.path.join(f"classifier/config/{args.config}.json"), 'r') as f:
         config = json.load(f)
 
-    return config, args
+    return args, config
 
 
 # Define a custom dataset class
@@ -72,9 +72,8 @@ def load_claims(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
+
 # Define a function to compute metrics
-
-
 def compute_metrics(pred):
     labels = pred.label_ids
     preds = np.argmax(pred.predictions, axis=1)
@@ -88,7 +87,7 @@ if __name__ == '__main__':
 
     # Get configuration
     print("> Get configuration...")
-    CONFIG, ARGS = get_config()
+    ARGS, CONFIG = get_config()
 
     # Set device
     print("> Set device...")
