@@ -164,4 +164,4 @@ cython_debug/
 # My ignore
 Homework/HW2/dataset/articles/
 Homework/HW2/dataset/preprocessed_articles/
-Homework/HW2/classifier/
+Homework/HW2/classifier/model/

@@ -1,0 +1,5 @@
+{
+    "input_path": "retriever/TF-IDF/top-5/",
+    "output_path": "classifier/model/bert-base-uncased_4/",
+    "pretrained_model": "bert-base-uncased"
+}

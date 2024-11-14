@@ -1,0 +1,5 @@
+{
+    "input_path": "retriever/BM25/top-10-unique/",
+    "output_path": "classifier/model/bert-base-uncased_2/",
+    "pretrained_model": "bert-base-uncased"
+}

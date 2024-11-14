@@ -7,6 +7,25 @@ from transformers import BertTokenizer, BertForSequenceClassification, Trainer, 
 from sklearn.metrics import f1_score
 from tqdm import tqdm
 import numpy as np
+import argparse
+
+
+def get_config():
+    # Create an ArgumentParser object
+    parser = argparse.ArgumentParser(
+        description="Process input and output file paths.")
+
+    # Add arguments
+    parser.add_argument('--config', type=str, required=True, help="name of config")
+
+    # Parse the arguments
+    args = parser.parse_args()
+    
+    # Load the config file
+    with open(os.path.join(f"classifier/config/{args.config}.json"), 'r') as f:
+        config = json.load(f)
+    
+    return config
 
 
 # Define a custom dataset class
@@ -64,10 +83,9 @@ def compute_metrics(pred):
 if __name__ == '__main__':
     print("> Start classifier!")
     
-    # Define paths
-    INPUT_DIR = "retriever/BM25/top-10-unique/"
-    OUTPUT_DIR = "classifier/BM25/TF-IDF/top-10-unique/"
-    PRETRAINED_MODEL = "bert-base-uncased"
+    # Get configuration
+    print("> Get configuration...")
+    CONFIG = get_config()
 
     # Set device
     print("> Set device...")
@@ -76,13 +94,13 @@ if __name__ == '__main__':
 
     # Load training and validation data
     print("> Load training and validation data...")
-    train_claims = load_claims(os.path.join(INPUT_DIR, "train.json"))
-    valid_claims = load_claims(os.path.join(INPUT_DIR, "valid.json"))
+    train_claims = load_claims(os.path.join(CONFIG["input_path"], "train.json"))
+    valid_claims = load_claims(os.path.join(CONFIG["input_path"], "valid.json"))
 
     # Initialize tokenizer and model
     print("> Initialize tokenizer and model...")
-    tokenizer = BertTokenizer.from_pretrained(PRETRAINED_MODEL)
-    model = BertForSequenceClassification.from_pretrained(PRETRAINED_MODEL, num_labels=3)
+    tokenizer = BertTokenizer.from_pretrained(CONFIG["pretrained_model"])
+    model = BertForSequenceClassification.from_pretrained(CONFIG["pretrained_model"], num_labels=3)
     model.to(device)
 
     # Create datasets and dataloaders
@@ -93,7 +111,7 @@ if __name__ == '__main__':
     # Training arguments
     print("> Training arguments...")
     training_args = TrainingArguments(
-        output_dir=OUTPUT_DIR,
+        output_dir=CONFIG["output_path"],
         num_train_epochs=3,
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
@@ -128,7 +146,7 @@ if __name__ == '__main__':
 
     # Save the model
     print("> Save the model...")
-    model.save_pretrained(OUTPUT_DIR)
-    tokenizer.save_pretrained(OUTPUT_DIR)
+    model.save_pretrained(CONFIG["output_path"])
+    tokenizer.save_pretrained(CONFIG["output_path"])
 
     print("> End classifier!")
