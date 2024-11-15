@@ -1,6 +1,6 @@
 The following is a fact-checking task. You will be given a claim followed by evidence sentences.
 Your task is to classify the claim as one of the following: 0 (False), 1 (Partial True), or 2 (True).
-Only output 1, 2, or 3!
+Only output 0, 1, or 2!
 
 Claim: {claim}
 
