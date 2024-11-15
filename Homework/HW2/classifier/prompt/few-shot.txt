@@ -1,0 +1,68 @@
+The following is a fact-checking task. You will be given a claim followed by evidence sentences.
+Your task is to classify the claim as one of the following: 0 (False), 1 (Partial True), or 2 (True).
+Only output 0, 1, or 2!
+
+Here are three examples you can refer to:
+
+# Example 1
+
+Claim: "Video shows that "Joe Biden participated in 'Black Face' skit.""
+
+Evidence Sentences:
+"joe biden"
+"joe biden introduced black singer michael jackson democratic dinner"
+"1985 joe biden refers black band member michael jackson"
+"1980s fundraising dinner joe biden singled black vocalist"
+"biden"
+"user clip 1985 joe biden refers black band member michael jackson"
+"clips live shows"
+"upcoming live shows"
+"people video"
+"joe biden jr us senator delaware"
+
+Label: 0
+
+# Example 2
+
+Claim: "While Act 10 allowed (Milwaukee County) to save some money, it was millions short of what we needed to fill the hole left by the $28 million cut in state aid."
+
+Evidence Sentences:
+"senate allowed act"
+"county would get hit reduction 28 million state"
+"hole left fill roughly half budget parks"
+"milwaukee county"
+"much cuts state aid hundreds millions dollars worth"
+"milwaukee lost 14 million state aid state budget realized"
+"local aid reductions needed solve state budget shortfall"
+"state budget left us significant challenge 214 million"
+"net impact aid reductions would leave projected 18 million hole"
+"forced 7 million state aid cut said really really"
+
+Label: 1
+
+# Example 3
+
+Claim: "The top 25 hedge fund managers (are) making more than all of America's kindergarten teachers combined."
+
+Evidence Sentences:
+"top 25 hedge fund managers making americas"
+"prosperity cant ceos hedge fund managers"
+"kindergarten teachers combined often paying lower tax rate"
+"252012 kindergarten teachers except special education"
+"students teachers"
+"fireside chat better alternative hedge fund replication"
+"teachers desk"
+"teachers 252050 substitute teachers shortterm 253031"
+"1 year 25"
+"valueacts new ceo mason morfit shows hedge fund succession work"
+
+Label: 2
+
+# Test
+
+Claim: {claim}
+
+Evidence Sentences: 
+{evidence_sentences}
+
+Label: 
