@@ -1,0 +1,7 @@
+{
+    "input_path": "retriever/TF-IDF/top-10-unique/",
+    "output_path": "classifier/model/bert-large-uncased_1/",
+    "pretrained_model": "google-bert/bert-large-uncased",
+    "epoch": 6,
+    "batch_size": 8
+}
