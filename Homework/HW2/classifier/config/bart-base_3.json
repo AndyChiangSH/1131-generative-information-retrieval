@@ -1,0 +1,7 @@
+{
+    "input_path": "retriever/TF-IDF/top-10-unique",
+    "output_path": "classifier/model/bart-base_3",
+    "pretrained_model": "facebook/bart-base",
+    "epoch": 3,
+    "batch_size": 2
+}

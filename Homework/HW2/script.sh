@@ -1,5 +1,6 @@
-python src/classifier.py --config="bert-base-uncased_1"
-python src/classifier.py --config="bert-base-uncased_2"
-python src/classifier.py --config="bert-base-uncased_3"
-python src/classifier.py --config="bert-base-uncased_4"
-python src/retriever.py
+python src/classifier.py --config="bart-base_1"
+python src/classifier.py --config="bart-base_2"
+python src/classifier.py --config="bart-base_3"
+python src/classifier.py --config="bert-large-uncased_1"
+python src/classifier.py --config="bert-large-uncased_2"
+python src/classifier.py --config="bert-large-uncased_3"
