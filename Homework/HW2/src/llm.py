@@ -36,16 +36,24 @@ def predict_label(prompt):
             {"role": "system", "content": "You are a fact-checker."}, 
             {"role": "user", "content": prompt}
         ],
-        max_tokens=1,
         temperature=0.1,
         top_p=0.1,
     )
     
-    label = response.choices[0].message.content
+    print("prompt:", prompt)
+    response_text = response.choices[0].message.content
+    print("response_text:", response_text)
+    label_text = response_text.split("Label:")[1].lower()
+    print("label_text:", label_text)
     
-    # print("label:", label)
-    
-    return int(label)
+    if "0" in label_text or "false" in label_text:
+        return 0
+    elif "1" in label_text or "partial" in label_text:
+        return 1
+    elif "2" in label_text or "true" in label_text:
+        return 2
+    else:
+        return 0
 
 
 if __name__ == "__main__":
@@ -57,8 +65,8 @@ if __name__ == "__main__":
         "input_path": "retriever/TF-IDF/top-10-unique/",
         "output_path": "submission/",
         "api": "openai",
-        "llm": "gpt-4o-mini",
-        "in_context_learning": "zero-shot"
+        "llm": "gpt-4o",
+        "prompt": "chain-of-thought"
     }
     print("CONFIG:", CONFIG)
     
@@ -81,12 +89,10 @@ if __name__ == "__main__":
         evidence_sentences = metadata.get("top_relevant_sentences", [])
         
         # Load prompt
-        prompt = load_prompt(f"classifier/prompt/{CONFIG['in_context_learning']}.txt")
+        prompt = load_prompt(f"classifier/prompt/{CONFIG['prompt']}.txt")
         prompt = prompt.replace("{claim}", claim)
         evidence_text = "\n".join(evidence_sentences)
         prompt = prompt.replace("{evidence_sentences}", evidence_text)
-        
-        # print("prompt:", prompt)
         
         # Use LLM to predict the label
         label = predict_label(prompt)
@@ -97,7 +103,7 @@ if __name__ == "__main__":
     # Create a DataFrame and save to CSV
     print("> Create a DataFrame and save to CSV...")
     submission_df = pd.DataFrame(submission_data)
-    submission_path = f"{CONFIG['output_path']}/{CONFIG['llm']}_{CONFIG['in_context_learning']}.csv"
+    submission_path = f"{CONFIG['output_path']}/{CONFIG['llm']}_{CONFIG['prompt']}.csv"
     submission_df.to_csv(submission_path, index=False)
 
     print(f"Submission file saved to: {submission_path}")

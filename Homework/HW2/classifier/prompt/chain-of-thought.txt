@@ -1,0 +1,81 @@
+The following is a fact-checking task. You will be given a claim followed by evidence sentences.
+Your task is to classify the claim as one of the following: 0 (False), 1 (Partial True), or 2 (True).
+Let's think step by step! Please tell me the reason first, and then tell me the label of the classification!
+
+Here are three examples you can refer to:
+
+# Example 1
+
+Claim: "Video shows that "Joe Biden participated in 'Black Face' skit.""
+
+Evidence Sentences:
+"joe biden"
+"joe biden introduced black singer michael jackson democratic dinner"
+"1985 joe biden refers black band member michael jackson"
+"1980s fundraising dinner joe biden singled black vocalist"
+"biden"
+"user clip 1985 joe biden refers black band member michael jackson"
+"clips live shows"
+"upcoming live shows"
+"people video"
+"joe biden jr us senator delaware"
+
+Reason: 
+The evidence sentences focus on Joe Biden’s actions, such as introducing a black singer (Michael Jackson), referencing a black band member, and attending a fundraising dinner. However, none of the evidence sentences directly suggest or imply that Joe Biden participated in a "Black Face" skit. "Black Face" refers to the practice of non-black individuals darkening their faces to imitate or stereotype black people, and there is no evidence supporting this specific claim in the sentences provided.
+
+Label: 0
+
+# Example 2
+
+Claim: "While Act 10 allowed (Milwaukee County) to save some money, it was millions short of what we needed to fill the hole left by the $28 million cut in state aid."
+
+Evidence Sentences:
+"senate allowed act"
+"county would get hit reduction 28 million state"
+"hole left fill roughly half budget parks"
+"milwaukee county"
+"much cuts state aid hundreds millions dollars worth"
+"milwaukee lost 14 million state aid state budget realized"
+"local aid reductions needed solve state budget shortfall"
+"state budget left us significant challenge 214 million"
+"net impact aid reductions would leave projected 18 million hole"
+"forced 7 million state aid cut said really really"
+
+Reason: 
+The claim discusses Act 10's impact on saving money for Milwaukee County but indicates that it was still "millions short" in making up for a $28 million cut in state aid. The evidence sentences suggest that state aid reductions, including the $28 million reduction, created a significant budget shortfall. There are mentions of losses, including Milwaukee losing $14 million in state aid, and a general reference to a shortfall caused by state aid cuts, which partially support the claim.
+However, the evidence does not directly quantify whether the savings from Act 10 specifically covered the "millions short" as stated in the claim. The sentences suggest a significant budget challenge, but they do not fully confirm that the savings from Act 10 were exactly short of the amount needed to cover the shortfall, making the claim partially supported.
+
+Label: 1
+
+# Example 3
+
+Claim: "The top 25 hedge fund managers (are) making more than all of America's kindergarten teachers combined."
+
+Evidence Sentences:
+"top 25 hedge fund managers making americas"
+"prosperity cant ceos hedge fund managers"
+"kindergarten teachers combined often paying lower tax rate"
+"252012 kindergarten teachers except special education"
+"students teachers"
+"fireside chat better alternative hedge fund replication"
+"teachers desk"
+"teachers 252050 substitute teachers shortterm 253031"
+"1 year 25"
+"valueacts new ceo mason morfit shows hedge fund succession work"
+
+Reason: 
+The evidence provides some related information about hedge fund managers and kindergarten teachers. Specifically, one sentence indicates that "top 25 hedge fund managers" are mentioned in relation to America, and another sentence notes that kindergarten teachers are paid at a lower tax rate, implying significant income differences. There is also a reference to the number of kindergarten teachers (252,012), and other details about the education sector.
+While the evidence does not directly provide the total earnings of both groups for a precise comparison, the information about high earnings for hedge fund managers, combined with the contextual information about teachers' lower wages, strongly supports the claim that the top 25 hedge fund managers earn more than all kindergarten teachers combined.
+
+Label: 2
+
+# Test
+
+Claim: {claim}
+
+Evidence Sentences: 
+{evidence_sentences}
+
+Reason: 
+
+Label: 
