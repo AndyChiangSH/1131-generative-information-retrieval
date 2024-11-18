@@ -3,7 +3,7 @@
 【NYCU 1131】資訊檢索與擷取 Generative Information Retrieval (515623)
 
 > Author: 312553024 江尚軒  
-> Date: 2024/10/24
+> Date: 2024/11/18
 
 ## Homework
 
