@@ -8,3 +8,4 @@
 ## Homework
 
 - [HW1 - Vector Model and BM25](https://github.com/AndyChiangSH/1131-generative-information-retrieval/tree/main/Homework/HW1)
+- [HW2 - Fact Checking](https://github.com/AndyChiangSH/1131-generative-information-retrieval/tree/main/Homework/HW2)
