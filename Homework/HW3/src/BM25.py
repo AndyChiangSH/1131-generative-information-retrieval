@@ -83,12 +83,12 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     
     # Create and train BM25 model
     logging.info("> Training BM25 model...")
-    bm25 = BM25Okapi(train_descriptions)
+    bm25 = BM25Okapi(train_dialogues)
     
     # Evaluate on train data
     logging.info("> Evaluating on train data...")
     train_recall = 0
-    for idx, (query, true_photo_id) in enumerate(zip(train_dialogues, train_photo_ids)):
+    for idx, (query, true_photo_id) in enumerate(zip(train_descriptions, train_photo_ids)):
         scores = bm25.get_scores(query)
         top_indices = np.argsort(scores)[-top_k:][::-1]
         top_photo_ids = [train_photo_ids[i] for i in top_indices]
@@ -98,12 +98,12 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     logging.info(f"Train Recall@{top_k}: {train_recall_at_k:.4f}")
     
     # Create BM25 for test images
-    bm25_test = BM25Okapi(test_descriptions)
+    bm25_test = BM25Okapi(test_dialogues)
     
     # Get test predictions
     logging.info("> Generating test submission...")
     results = []
-    for idx, (dialogue_id, query) in enumerate(zip(test_dialogue_ids, test_dialogues)):
+    for idx, (dialogue_id, query) in enumerate(zip(test_dialogue_ids, test_descriptions)):
         scores = bm25_test.get_scores(query)
         top_indices = np.argsort(scores)[-top_k:][::-1]
         photo_ids = []
@@ -123,8 +123,8 @@ if __name__ == "__main__":
         "train_path": "dataset/train.jsonl",
         "test_path": "dataset/test.jsonl",
         "test_images_path": "dataset/test_images.jsonl", 
-        "submission_path": "submission/BM25_1.csv",
-        "log_path": "log/BM25_1.log"
+        "submission_path": "submission/BM25_2.csv",
+        "log_path": "log/BM25_2.log"
     }
     
     logging.basicConfig(
