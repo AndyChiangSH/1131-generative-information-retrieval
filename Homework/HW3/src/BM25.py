@@ -1,8 +1,7 @@
 import json
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from rank_bm25 import BM25Okapi
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -14,6 +13,7 @@ import logging
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+
 
 def read_jsonl(file_path):
     data = []
@@ -37,12 +37,7 @@ def convert_description_to_text(description):
 
 
 def preprocess_text(text):
-    """Preprocess text with following steps:
-    1. Convert to lowercase
-    2. Remove special characters 
-    3. Tokenize and remove stopwords
-    4. Lemmatize tokens
-    """
+    """Preprocess text with following steps"""
     # Convert to lowercase
     text = text.lower()
     
@@ -60,7 +55,7 @@ def preprocess_text(text):
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(token) for token in tokens]
     
-    return ' '.join(tokens)
+    return tokens  # Return tokens for BM25
 
 
 def calculate_recall_at_k(predictions, true_id, k=30):
@@ -86,19 +81,15 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     test_descriptions = [preprocess_text(convert_description_to_text(item["photo_description"])) for item in test_images_data]
     test_photo_ids = [item["photo_id"] for item in test_images_data]
     
-    # Create and train TF-IDF vectorizer
-    logging.info("> Training TF-IDF vectorizer...")
-    vectorizer = TfidfVectorizer(stop_words='english')
-    vectorizer.fit(train_descriptions + train_dialogues)
+    # Create and train BM25 model
+    logging.info("> Training BM25 model...")
+    bm25 = BM25Okapi(train_descriptions)
     
     # Evaluate on train data
     logging.info("> Evaluating on train data...")
-    train_dialogue_vectors = vectorizer.transform(train_dialogues)
-    train_photo_vectors = vectorizer.transform(train_descriptions)
-    
     train_recall = 0
-    for idx, true_photo_id in enumerate(train_photo_ids):
-        scores = cosine_similarity(train_dialogue_vectors[idx:idx+1], train_photo_vectors)[0]
+    for idx, (query, true_photo_id) in enumerate(zip(train_dialogues, train_photo_ids)):
+        scores = bm25.get_scores(query)
         top_indices = np.argsort(scores)[-top_k:][::-1]
         top_photo_ids = [train_photo_ids[i] for i in top_indices]
         train_recall += calculate_recall_at_k(top_photo_ids, true_photo_id, top_k)
@@ -106,14 +97,14 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     train_recall_at_k = train_recall / len(train_data)
     logging.info(f"Train Recall@{top_k}: {train_recall_at_k:.4f}")
     
+    # Create BM25 for test images
+    bm25_test = BM25Okapi(test_descriptions)
+    
     # Get test predictions
     logging.info("> Generating test submission...")
-    dialogue_vectors = vectorizer.transform(test_dialogues)
-    photo_vectors = vectorizer.transform(test_descriptions)
-    
     results = []
-    for idx, dialogue_id in enumerate(test_dialogue_ids):
-        scores = cosine_similarity(dialogue_vectors[idx:idx+1], photo_vectors)[0]
+    for idx, (dialogue_id, query) in enumerate(zip(test_dialogue_ids, test_dialogues)):
+        scores = bm25_test.get_scores(query)
         top_indices = np.argsort(scores)[-top_k:][::-1]
         photo_ids = []
         for photo_idx in top_indices:
@@ -131,30 +122,27 @@ if __name__ == "__main__":
     CONFIG = {
         "train_path": "dataset/train.jsonl",
         "test_path": "dataset/test.jsonl",
-        "test_images_path": "dataset/test_images.jsonl",
-        "submission_path": "submission/TF-IDF_2.csv",
-        "log_path": "log/TF-IDF_2.log"
+        "test_images_path": "dataset/test_images.jsonl", 
+        "submission_path": "submission/BM25_1.csv",
+        "log_path": "log/BM25_1.log"
     }
     
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(message)s',
         handlers=[
-            logging.FileHandler(CONFIG["log_path"]),  # Save to file
-            logging.StreamHandler()  # Also logging.info to console
+            logging.FileHandler(CONFIG["log_path"]),
+            logging.StreamHandler()
         ]
     )
     
-    # Log config and results
-    logging.info("> Start TF-IDF!")
+    logging.info("> Start BM25!")
     logging.info(f"Config: {CONFIG}")
     
-    # Get results with train evaluation
     results_df = retrieve(CONFIG["train_path"], CONFIG["test_path"], CONFIG["test_images_path"])
     
-    # Save submission
     logging.info("> Saving submission...")
     results_df.to_csv(CONFIG["submission_path"], index=False)
     logging.info(f"Created submission with shape: {results_df.shape}")
     
-    logging.info("> End TF-IDF!")
+    logging.info("> End BM25!")
