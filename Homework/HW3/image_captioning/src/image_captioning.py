@@ -67,10 +67,10 @@ def image_captioning(input_path, image_dir, output_dir, model_name):
     
 if __name__ == '__main__':
     CONFIG = {
-        "model_name": "microsoft/git-base",
+        "model_name": "microsoft/git-base-coco",
         "input_path": "dataset/",
-        "output_path": "image_captioning/dataset/git-base_1/",
-        "log_path": "image_captioning/log/git-base_1.log",
+        "output_path": "image_captioning/dataset/git-base-coco_1/",
+        "log_path": "image_captioning/log/git-base-coco_1.log",
     }
     
     # Set up logging
