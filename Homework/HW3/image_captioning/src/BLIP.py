@@ -34,7 +34,7 @@ def image_captioning(input_path, image_dir, output_dir, model_name):
                 raw_image = Image.open(image_path).convert('RGB')
 
                 # conditional image captioning
-                text = "a photography of"
+                text = ""
                 inputs = processor(raw_image, text, return_tensors="pt").to(device)
 
                 out = model.generate(**inputs)
@@ -60,8 +60,8 @@ if __name__ == '__main__':
     CONFIG = {
         "model_name": "Salesforce/blip-image-captioning-large",
         "input_path": "dataset/",
-        "output_path": "image_captioning/dataset/blip-image-captioning-large_1/",
-        "log_path": "image_captioning/log/blip-image-captioning-large_1.log",
+        "output_path": "image_captioning/dataset/blip-image-captioning-large_2/",
+        "log_path": "image_captioning/log/blip-image-captioning-large_2.log",
     }
     
     # Set up logging
