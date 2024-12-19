@@ -129,11 +129,11 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
 
 if __name__ == "__main__":
     CONFIG = {
-        "train_path": "image_captioning/dataset/blip-image-captioning-large_2/train.jsonl",
-        "test_path": "image_captioning/dataset/blip-image-captioning-large_2/test.jsonl",
-        "test_images_path": "image_captioning/dataset/blip-image-captioning-large_2/test_images.jsonl",
-        "submission_path": "retriever/submission/TF-IDF_10.csv",
-        "log_path": "retriever/log/TF-IDF_10.log"
+        "train_path": "image_captioning/dataset/base+git-large-coco_1/train.jsonl",
+        "test_path": "image_captioning/dataset/base+git-large-coco_1/test.jsonl",
+        "test_images_path": "image_captioning/dataset/base+git-large-coco_1/test_images.jsonl",
+        "submission_path": "retriever/submission/TF-IDF_11.csv",
+        "log_path": "retriever/log/TF-IDF_11.log"
     }
     
     logging.basicConfig(
