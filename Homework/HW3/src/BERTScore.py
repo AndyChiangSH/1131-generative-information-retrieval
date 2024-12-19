@@ -1,13 +1,15 @@
 import json
 import numpy as np
 import pandas as pd
-from rank_bm25 import BM25Okapi
+from bert_score import score
+import torch
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 import nltk
 import logging
+from tqdm import tqdm
 
 # Download required NLTK data
 nltk.download('punkt')
@@ -44,18 +46,7 @@ def preprocess_text(text):
     # Remove special characters
     text = re.sub(r'[^\w\s]', ' ', text)
     
-    # Tokenize
-    tokens = word_tokenize(text)
-    
-    # Remove stopwords
-    stop_words = set(stopwords.words('english'))
-    tokens = [token for token in tokens if token not in stop_words]
-    
-    # Lemmatize
-    lemmatizer = WordNetLemmatizer()
-    tokens = [lemmatizer.lemmatize(token) for token in tokens]
-    
-    return tokens  # Return tokens for BM25
+    return text  # Return text for BERT
 
 
 def calculate_recall_at_k(predictions, true_id, k=30):
@@ -70,6 +61,10 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     test_data = read_jsonl(test_path)
     test_images_data = read_jsonl(test_images_path)
     
+    # Set device
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    logging.info(f"Device: {device}")
+    
     # Extract and preprocess all data
     logging.info("> Extracting and preprocessing data...")
     train_dialogues = [preprocess_text(convert_dialogue_to_text(item["dialogue"])) for item in train_data]
@@ -81,15 +76,12 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     test_descriptions = [preprocess_text(convert_description_to_text(item["photo_description"])) for item in test_images_data]
     test_photo_ids = [item["photo_id"] for item in test_images_data]
     
-    # Create and train BM25 model
-    logging.info("> Training BM25 model...")
-    bm25 = BM25Okapi(train_descriptions)
-    
     # Evaluate on train data
     logging.info("> Evaluating on train data...")
     train_recall = 0
-    for idx, (query, true_photo_id) in enumerate(zip(train_dialogues, train_photo_ids)):
-        scores = bm25.get_scores(query)
+    for idx, (query, true_photo_id) in enumerate(tqdm(zip(train_dialogues, train_photo_ids))):
+        _, _, F1 = score([query] * len(train_descriptions), train_descriptions, lang='en', device=device)
+        scores = F1.numpy()
         top_indices = np.argsort(scores)[-top_k:][::-1]
         top_photo_ids = [train_photo_ids[i] for i in top_indices]
         train_recall += calculate_recall_at_k(top_photo_ids, true_photo_id, top_k)
@@ -97,14 +89,12 @@ def retrieve(train_path, test_path, test_images_path, top_k=30):
     train_recall_at_k = train_recall / len(train_data)
     logging.info(f"Train Recall@{top_k}: {train_recall_at_k:.4f}")
     
-    # Create BM25 for test images
-    bm25_test = BM25Okapi(test_descriptions)
-    
     # Get test predictions
     logging.info("> Generating test submission...")
     results = []
-    for idx, (dialogue_id, query) in enumerate(zip(test_dialogue_ids, test_dialogues)):
-        scores = bm25_test.get_scores(query)
+    for idx, (dialogue_id, query) in enumerate(tqdm(zip(test_dialogue_ids, test_dialogues))):
+        _, _, F1 = score([query] * len(test_descriptions), test_descriptions, lang='en', device=device)
+        scores = F1.numpy()
         top_indices = np.argsort(scores)[-top_k:][::-1]
         photo_ids = []
         for photo_idx in top_indices:
@@ -122,11 +112,12 @@ if __name__ == "__main__":
     CONFIG = {
         "train_path": "dataset/train.jsonl",
         "test_path": "dataset/test.jsonl",
-        "test_images_path": "dataset/test_images.jsonl", 
-        "submission_path": "submission/BM25_2.csv",
-        "log_path": "log/BM25_2.log"
+        "test_images_path": "dataset/test_images.jsonl",
+        "submission_path": "submission/BERTScore_1.csv", 
+        "log_path": "log/BERTScore_1.log"
     }
     
+    # Set up logging
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(message)s',
@@ -136,13 +127,16 @@ if __name__ == "__main__":
         ]
     )
     
-    logging.info("> Start BM25!")
+    # Log config and start
+    logging.info("> Start BERTScore!")
     logging.info(f"Config: {CONFIG}")
     
+    # Get results with train evaluation 
     results_df = retrieve(CONFIG["train_path"], CONFIG["test_path"], CONFIG["test_images_path"])
     
+    # Save submission
     logging.info("> Saving submission...")
     results_df.to_csv(CONFIG["submission_path"], index=False)
     logging.info(f"Created submission with shape: {results_df.shape}")
     
-    logging.info("> End BM25!")
+    logging.info("> End BERTScore!")
