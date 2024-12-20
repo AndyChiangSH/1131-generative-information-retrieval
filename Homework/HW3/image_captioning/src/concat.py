@@ -33,9 +33,9 @@ def concat_descriptions(original_path, captioned_path, output_path):
 
 if __name__ == "__main__":
     CONFIG = {
-        "input_path": "dataset/",
-        "concat_path": "image_captioning/dataset/blip-image-captioning-large_1/",
-        "output_path": "image_captioning/dataset/base+blip-image-captioning-large_1/",
+        "input_path": "image_captioning/dataset/base+blip-image-captioning-large_1/",
+        "concat_path": "image_captioning/dataset/git-large-coco_1/",
+        "output_path": "image_captioning/dataset/base+blip-image-captioning-large_1+git-large-coco_1/",
     }
     
     logging.basicConfig(
